@@ -66,7 +66,7 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
     @Override
     protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLException {
         try {
-//            TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
+            TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
 //
 //            try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
 //                stmt.executeQuery();
