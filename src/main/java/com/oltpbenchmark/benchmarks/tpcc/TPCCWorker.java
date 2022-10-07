@@ -19,7 +19,6 @@
 package com.oltpbenchmark.benchmarks.tpcc;
 
 import com.oltpbenchmark.api.Procedure.UserAbortException;
-import com.oltpbenchmark.api.SQLStmt;
 import com.oltpbenchmark.api.TransactionType;
 import com.oltpbenchmark.api.Worker;
 import com.oltpbenchmark.benchmarks.tpcc.procedures.TPCCProcedure;
@@ -58,8 +57,6 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
         this.numWarehouses = numWarehouses;
     }
 
-    public final SQLStmt select1 = new SQLStmt("SELECT 1;");
-
     /**
      * Executes a single TPCC transaction of type transactionType.
      */
@@ -68,12 +65,6 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
         try {
             TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
 
-            try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
-                stmt.executeQuery();
-                // We don't care about the ResultSet.
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex.getMessage() + ex.getCause());
-            }
 //            conn.isValid(0);
             proc.run(conn, gen, terminalWarehouseID, numWarehouses,
                 terminalDistrictLowerID, terminalDistrictUpperID, this);

@@ -109,7 +109,16 @@ public class Payment extends TPCCProcedure {
             "   AND C_LAST = ? " +
             " ORDER BY C_FIRST");
 
+    public final SQLStmt select1 = new SQLStmt("SELECT 1;");
+
     public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker worker) throws SQLException {
+
+        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+            stmt.executeQuery();
+            // We don't care about the ResultSet.
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage() + ex.getCause());
+        }
 
         int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
 

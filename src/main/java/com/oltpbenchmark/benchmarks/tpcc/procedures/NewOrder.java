@@ -93,7 +93,16 @@ public class NewOrder extends TPCCProcedure {
             " VALUES (?,?,?,?,?,?,?,?,?)");
 
 
+    public final SQLStmt select1 = new SQLStmt("SELECT 1;");
+
     public void run(Connection conn, Random gen, int terminalWarehouseID, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
+
+        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+            stmt.executeQuery();
+            // We don't care about the ResultSet.
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage() + ex.getCause());
+        }
 
         int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
         int customerID = TPCCUtil.getCustomerID(gen);

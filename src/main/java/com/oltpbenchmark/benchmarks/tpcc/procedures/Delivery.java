@@ -82,7 +82,15 @@ public class Delivery extends TPCCProcedure {
             "   AND C_ID = ? ");
 
 
+    public final SQLStmt select1 = new SQLStmt("SELECT 1;");
     public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
+
+        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+            stmt.executeQuery();
+            // We don't care about the ResultSet.
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage() + ex.getCause());
+        }
 
         int o_carrier_id = TPCCUtil.randomNumber(1, 10, gen);
 
