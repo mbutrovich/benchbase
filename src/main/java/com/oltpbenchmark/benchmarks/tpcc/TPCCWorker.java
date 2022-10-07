@@ -57,6 +57,8 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
         this.numWarehouses = numWarehouses;
     }
 
+    public final SQLStmt select1 = new SQLStmt("SELECT 1;");
+
     /**
      * Executes a single TPCC transaction of type transactionType.
      */
@@ -64,9 +66,16 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
     protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLException {
         try {
             TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
-            conn.isValid(10);
+
+            try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+                stmt.executeQuery();
+                // We don't care about the ResultSet.
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex.getMessage() + ex.getCause());
+            }
+
             proc.run(conn, gen, terminalWarehouseID, numWarehouses,
-                    terminalDistrictLowerID, terminalDistrictUpperID, this);
+                terminalDistrictLowerID, terminalDistrictUpperID, this);
         } catch (ClassCastException ex) {
             //fail gracefully
             LOG.error("We have been invoked with an INVALID transactionType?!", ex);
