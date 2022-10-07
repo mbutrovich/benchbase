@@ -67,14 +67,14 @@ public class TPCCWorker extends Worker<TPCCBenchmark> {
     protected TransactionStatus executeWork(Connection conn, TransactionType nextTransaction) throws UserAbortException, SQLException {
         try {
             TPCCProcedure proc = (TPCCProcedure) this.getProcedure(nextTransaction.getProcedureClass());
-//
-//            try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
-//                stmt.executeQuery();
-//                // We don't care about the ResultSet.
-//            } catch (SQLException ex) {
-//                throw new RuntimeException(ex.getMessage() + ex.getCause());
-//            }
-            conn.isValid(0);
+
+            try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+                stmt.executeQuery();
+                // We don't care about the ResultSet.
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex.getMessage() + ex.getCause());
+            }
+//            conn.isValid(0);
             proc.run(conn, gen, terminalWarehouseID, numWarehouses,
                 terminalDistrictLowerID, terminalDistrictUpperID, this);
         } catch (ClassCastException ex) {
