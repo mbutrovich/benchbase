@@ -97,13 +97,6 @@ public class NewOrder extends TPCCProcedure {
 
     public void run(Connection conn, Random gen, int terminalWarehouseID, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker w) throws SQLException {
 
-        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
-            stmt.executeQuery();
-            // We don't care about the ResultSet.
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex.getMessage() + ex.getCause());
-        }
-
         int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
         int customerID = TPCCUtil.getCustomerID(gen);
 
@@ -133,6 +126,13 @@ public class NewOrder extends TPCCProcedure {
         }
 
         newOrderTransaction(terminalWarehouseID, districtID, customerID, numItems, allLocal, itemIDs, supplierWarehouseIDs, orderQuantities, conn);
+
+        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+            stmt.executeQuery();
+            // We don't care about the ResultSet.
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage() + ex.getCause());
+        }
 
     }
 

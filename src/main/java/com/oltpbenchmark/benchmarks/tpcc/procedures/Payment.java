@@ -113,13 +113,6 @@ public class Payment extends TPCCProcedure {
 
     public void run(Connection conn, Random gen, int w_id, int numWarehouses, int terminalDistrictLowerID, int terminalDistrictUpperID, TPCCWorker worker) throws SQLException {
 
-        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
-            stmt.executeQuery();
-            // We don't care about the ResultSet.
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex.getMessage() + ex.getCause());
-        }
-
         int districtID = TPCCUtil.randomNumber(terminalDistrictLowerID, terminalDistrictUpperID, gen);
 
         float paymentAmount = (float) (TPCCUtil.randomNumber(100, 500000, gen) / 100.0);
@@ -233,6 +226,13 @@ public class Payment extends TPCCProcedure {
 
             LOG.trace(terminalMessage.toString());
 
+        }
+
+        try (PreparedStatement stmt = this.getPreparedStatement(conn, select1)) {
+            stmt.executeQuery();
+            // We don't care about the ResultSet.
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex.getMessage() + ex.getCause());
         }
 
     }
